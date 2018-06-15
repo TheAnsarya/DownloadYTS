@@ -75,8 +75,8 @@ namespace DownloadYTS {
 		}
 
 		static void Main(string[] args) {
-			//DownloadYTS();
-			DownloadTypes();
+			DownloadYTS();
+			//DownloadTypes();
 		}
 
 		static void DownloadYTS() {
@@ -161,7 +161,7 @@ namespace DownloadYTS {
 									if (pageMatches.Count == 0) {
 										Error("No page matches - " + pageName + " - " + pageUrl);
 									} else {
-										string torrentUrl = pageMatches[0].Groups[pageMatches[0].Groups.Count - 1].Value;
+										string torrentUrl = pageMatches[0].Groups[pageMatches[0].Groups.Count - 2].Value;
 										string torrentName = String.Format(TorrentFileName, i, current, title);
 
 										Log("torrent file - " + torrentName + " - " + torrentUrl);
