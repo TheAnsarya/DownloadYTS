@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,14 +12,26 @@ using System.Threading.Tasks;
 
 namespace DownloadYTS {
 	class Program {
-		static string LogFileName = @"c:\working\yts\log\log-{0}.txt";
-		static string ErrorFileName = @"c:\working\yts\error\error-{0}.txt";
+		static string LogFileName = @"c:\working\yts\{now}\log.txt";
+		static string ErrorFileName = @"c:\working\yts\{now}\error.txt";
 		static string StartURL = @"https://yts.am/browse-movies?page=1";
-		static string StartFileName = @"c:\working\yts\start\start-{0}.txt";
-		static string ListFileName = @"c:\working\yts\list\list-{0}.txt";
-		static string PageFileName = @"c:\working\yts\page\page-{0}-{1}.txt";
+		static string StartFileName = @"c:\working\yts\{now}\start.txt";
+		static string ListURL = @"https://yts.am/browse-movies?page={0}";
+		static string ListFileName = @"c:\working\yts\{now}\list\list-{0}.txt";
+		static string PageFileName = @"c:\working\yts\{now}\page\page-{0}-{1}.txt";
+		static string TorrentFileName = @"c:\working\yts\{now}\torrent\{0}-{1}-{2}.torrent";
 
-		static Regex listRegex = new Regex(@"<a href=""(.+)"" class=""browse - movie - title"">(.+)<\/a>\s+<div class=""browse - movie - year"">(.+)<\/div>");
+		static string DiagnosticNow = @"2017-12-17_11-41-23-1358";
+
+		static string NowString = Now();
+
+		static int PerPage = 20;
+		static int StartOnPage = 1;
+
+		static Regex listRegex = new Regex(@"<a href=""(.+)"" class=""browse-movie-title"">(.+)</a>\s+<div class=""browse-movie-year"">(.+)</div>");
+		static Regex lastRegex = new Regex(@"<a href=""/browse-movies\?page=(\d+)"">Last &raquo;</a>");
+		static Regex pageRegex = new Regex(@"<em class=""pull-left"">Available in: &nbsp;</em>\s+(?:<a href=""(.+)"" rel=""nofollow"" title="".+"">(.+)</a>\s*)+");
+		static Regex filenameRegex = new Regex(@"[\*\.""\/\?\\:;|=,]");
 
 		static StreamWriter _logFile;
 		static StreamWriter LogFile {
@@ -62,18 +75,161 @@ namespace DownloadYTS {
 		}
 
 		static void Main(string[] args) {
+			//DownloadYTS();
+			DownloadTypes();
+		}
+
+		static void DownloadYTS() {
+			FixFileNames();
 			Directories();
 
 			Log("START");
-			
+
 			WebClient web = new WebClient();
 
 			string startName = String.Format(StartFileName, Now());
 			Log("start file - " + startName);
 			web.DownloadFile(StartURL, startName);
+			Wait();
+
+			string text = File.ReadAllText(startName);
+			MatchCollection startMatches = lastRegex.Matches(text);
+			Log("start match count - " + startMatches.Count);
+
+			if (startMatches.Count == 0) {
+				Error("No last link");
+			} else {
+				int lastPage = int.Parse(startMatches[0].Groups[1].Value);
+				Log("last number - " + lastPage);
+
+				string lastName = String.Format(ListFileName, lastPage);
+				Log("last file - " + lastName);
+				web.DownloadFile(StartURL, lastName);
+				Wait();
+
+				text = File.ReadAllText(lastName);
+				MatchCollection lastMatches = lastRegex.Matches(text);
+				Log("last match count - " + lastMatches.Count);
+
+				if (lastMatches.Count == 0) {
+					Error("No last matches");
+				} else {
+					int total = ((lastPage - 1) * PerPage) + lastMatches.Count;
+					Log("total - " + total);
+					int current = total - ((StartOnPage - 1) * PerPage);
+					Log("start with - " + current);
+
+					for (int i = StartOnPage; i < lastPage; i++) {// 2; i++) {
+						string listName = String.Format(ListFileName, i);
+						string listUrl = String.Format(ListURL, i);
+						Log("list file - " + listName);
+						web.DownloadFile(listUrl, listName);
+						Wait();
+
+						text = File.ReadAllText(listName);
+						MatchCollection listMatches = listRegex.Matches(text);
+						Log("list match count - " + listMatches.Count);
+
+						if (listMatches.Count == 0) {
+							Error("No list matches");
+						} else {
+							for (int j = 0; j < listMatches.Count; j++) {
+								bool go = true;
+								string pageUrl = listMatches[j].Groups[1].Value;
+								Log("page url - " + pageUrl);
+
+								string name = filenameRegex.Replace(listMatches[j].Groups[2].Value, "-");
+								string year = listMatches[j].Groups[3].Value;
+								string title = name + " (" + year + ")";
+
+								string pageName = String.Format(PageFileName, current, title);
+								Log("page name - " + pageName);
+								try {
+									web.DownloadFile(pageUrl, pageName);
+								} catch (Exception ex) {
+									Error("bad fetch page - " + pageName + " - " + pageUrl);
+									go = false;
+								}
+
+								if (go) {
+									Wait();
+
+									text = File.ReadAllText(pageName);
+									MatchCollection pageMatches = pageRegex.Matches(text);
+									Log("page match count - " + pageMatches.Count);
+
+									if (pageMatches.Count == 0) {
+										Error("No page matches - " + pageName + " - " + pageUrl);
+									} else {
+										string torrentUrl = pageMatches[0].Groups[pageMatches[0].Groups.Count - 1].Value;
+										string torrentName = String.Format(TorrentFileName, i, current, title);
+
+										Log("torrent file - " + torrentName + " - " + torrentUrl);
+
+										try {
+											web.DownloadFile(torrentUrl, torrentName);
+										} catch (Exception ex) {
+											Error("bad fetch torrent - " + torrentName + " - " + torrentUrl + " - " + ex.ToString());
+										}
+
+										Wait();
+									}
+								}
+
+								current--;
+							}
+						}
+					}
+				}
+			}
+
+			End();
+		}
+
+		static void DownloadTypes() {
+
+			string dir = Path.GetDirectoryName(PageFileName.Replace("{now}", NowString));
+			FixFileNames();
+			Directories();
+			Log("START");
+			Dictionary<string, int> counts = new Dictionary<string, int>();
+
+			var pageNames = Directory.EnumerateFiles(dir);
+			Log("page count - " + pageNames.Count());
+			foreach (var pageName in pageNames) {
+				Log("page - " + pageName);
+				string content = File.ReadAllText(pageName);
+				MatchCollection pageMatches = pageRegex.Matches(content);
+				Log("page match count - " + pageMatches.Count);
+
+				if (pageMatches.Count == 0) {
+					Error("No page matches - " + pageName);
+				} else {
+					//for (pageMatches[0].Groups) {
+					string title = "";
+					//}
+				}
+
+			}
+
+
+
+
+
+
 
 
 			End();
+		}
+
+
+		static void FixFileNames() {
+			LogFileName = LogFileName.Replace("{now}", NowString);
+			ErrorFileName = ErrorFileName.Replace("{now}", NowString);
+			StartFileName = StartFileName.Replace("{now}", NowString);
+			ListFileName = ListFileName.Replace("{now}", NowString);
+			PageFileName = PageFileName.Replace("{now}", NowString);
+			TorrentFileName = TorrentFileName.Replace("{now}", NowString);
 		}
 
 		static void Directories() {
@@ -82,6 +238,7 @@ namespace DownloadYTS {
 			mkdir(StartFileName);
 			mkdir(ListFileName);
 			mkdir(PageFileName);
+			mkdir(TorrentFileName);
 		}
 
 		static void mkdir(string path) {
@@ -98,24 +255,30 @@ namespace DownloadYTS {
 		}
 
 		static string Now() {
-			return DateTime.Now.ToString("yyyy-MM-dd-HHmmss-ffff");
+			return DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-ffff");
+		}
+
+		static string LogStamp() {
+			return Now() + " " + ClockStamp() + " --- ";
 		}
 
 		static void Log(string message) {
-			message = Now() + " " + message;
+			message = LogStamp() + message;
 			Console.WriteLine(message);
 			LogFile.WriteLine(message);
+			LogFile.Flush();
 		}
 
 		static void Error(string message) {
 			Log(message);
-			message = Now() + " " + message;
+			message = LogStamp() + message;
 			ErrorFile.WriteLine(message);
+			ErrorFile.Flush();
 		}
 
 		static void Wait() {
-			int time = 3000 + RNG.Next(8000);
-			Thread.Sleep(time);
+			//int time = 500 + RNG.Next(1000);
+			//Thread.Sleep(time);
 		}
 
 		static void End() {
@@ -132,3 +295,4 @@ namespace DownloadYTS {
 		}
 	}
 }
+
