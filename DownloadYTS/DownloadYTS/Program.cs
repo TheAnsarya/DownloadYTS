@@ -20,6 +20,7 @@ namespace DownloadYTS {
 		static string ListFileName = @"c:\working\yts\{now}\list\list-{0}.txt";
 		static string PageFileName = @"c:\working\yts\{now}\page\page-{0}-{1}.txt";
 		static string TorrentFileName = @"c:\working\yts\{now}\torrent\{0}-{1}-{2}.torrent";
+		static string TorrentFileNameSecond = @"c:\working\yts\{now}\torrent\{0} [{1}].torrent";
 
 		static string DiagnosticNow = @"2017-12-17_11-41-23-1358";
 
@@ -30,8 +31,12 @@ namespace DownloadYTS {
 
 		static Regex listRegex = new Regex(@"<a href=""(.+)"" class=""browse-movie-title"">(.+)</a>\s+<div class=""browse-movie-year"">(.+)</div>");
 		static Regex lastRegex = new Regex(@"<a href=""/browse-movies\?page=(\d+)"">Last &raquo;</a>");
-		static Regex pageRegex = new Regex(@"<em class=""pull-left"">Available in: &nbsp;</em>\s+(?:<a href=""(.+)"" rel=""nofollow"" title="".+"">(.+)</a>\s*)+");
+
+		// <em class="pull-left">Available in: &nbsp;<\/em>\s+(?:<a href="(.+)" rel="nofollow" title=".+">(.+)<\/a>\s*)+
+		static Regex pageRegex = new Regex(@"<em class=""pull-left"">Available in: &nbsp;<\/em>\s+(?:<a href=""(.+)"" rel=""nofollow"" title="".+"">(.+)<\/a>\s*)+");
 		static Regex filenameRegex = new Regex(@"[\*\.""\/\?\\:;|=,]");
+
+		static System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
 
 		static StreamWriter _logFile;
 		static StreamWriter LogFile {
@@ -172,6 +177,17 @@ namespace DownloadYTS {
 											Error("bad fetch torrent - " + torrentName + " - " + torrentUrl + " - " + ex.ToString());
 										}
 
+										try {
+											string hash = FileToMD5(torrentName);
+											string otherName = String.Format(TorrentFileNameSecond, title, hash);
+
+											File.Move(torrentName, otherName);
+										} catch (Exception ex) {
+											Error("error changing md5 name - " + torrentName + " - " + torrentUrl + " - " + ex.ToString());
+										}
+
+
+
 										Wait();
 									}
 								}
@@ -184,6 +200,19 @@ namespace DownloadYTS {
 			}
 
 			End();
+		}
+
+		static string FileToMD5(string filename) {
+			FileStream fs = File.Open(filename, FileMode.Open);
+			byte[] crc = md5.ComputeHash(fs);
+			StringBuilder sb = new StringBuilder();
+			for (int k = 0; k < crc.Length; k++) {
+				sb.Append(crc[k].ToString("x2"));
+			}
+			string hash = sb.ToString();
+			fs.Close();
+
+			return hash;
 		}
 
 		static void DownloadTypes() {
@@ -230,6 +259,7 @@ namespace DownloadYTS {
 			ListFileName = ListFileName.Replace("{now}", NowString);
 			PageFileName = PageFileName.Replace("{now}", NowString);
 			TorrentFileName = TorrentFileName.Replace("{now}", NowString);
+			TorrentFileNameSecond = TorrentFileNameSecond.Replace("{now}", NowString);
 		}
 
 		static void Directories() {
