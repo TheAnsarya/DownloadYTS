@@ -14,9 +14,9 @@ namespace DownloadYTS {
 	class Program {
 		static string LogFileName = @"c:\working\yts\{now}\log.txt";
 		static string ErrorFileName = @"c:\working\yts\{now}\error.txt";
-		static string StartURL = @"https://yts.am/browse-movies?page=1";
+		static string StartURL = @"https://yts.mx/browse-movies?page=1";
 		static string StartFileName = @"c:\working\yts\{now}\start.txt";
-		static string ListURL = @"https://yts.am/browse-movies?page={0}";
+		static string ListURL = @"https://yts.mx/browse-movies?page={0}";
 		static string ListFileName = @"c:\working\yts\{now}\list\list-{0}.txt";
 		static string PageFileName = @"c:\working\yts\{now}\page\page-{0}-{1}.txt";
 		static string TorrentFileName = @"c:\working\yts\{now}\torrent\{0}-{1}-{2}.torrent";
@@ -42,7 +42,7 @@ namespace DownloadYTS {
 		static StreamWriter LogFile {
 			get {
 				if (_logFile == null) {
-					_logFile = File.CreateText(String.Format(LogFileName, Now()));
+					_logFile = File.CreateText(string.Format(LogFileName, Now()));
 				}
 				return _logFile;
 			}
@@ -52,7 +52,7 @@ namespace DownloadYTS {
 		static StreamWriter ErrorFile {
 			get {
 				if (_errorFile == null) {
-					_errorFile = File.CreateText(String.Format(ErrorFileName, Now()));
+					_errorFile = File.CreateText(string.Format(ErrorFileName, Now()));
 				}
 				return _errorFile;
 			}
@@ -92,7 +92,7 @@ namespace DownloadYTS {
 
 			WebClient web = new WebClient();
 
-			string startName = String.Format(StartFileName, Now());
+			string startName = string.Format(StartFileName, Now());
 			Log("start file - " + startName);
 			web.DownloadFile(StartURL, startName);
 			Wait();
@@ -107,7 +107,7 @@ namespace DownloadYTS {
 				int lastPage = int.Parse(startMatches[0].Groups[1].Value);
 				Log("last number - " + lastPage);
 
-				string lastName = String.Format(ListFileName, lastPage);
+				string lastName = string.Format(ListFileName, lastPage);
 				Log("last file - " + lastName);
 				web.DownloadFile(StartURL, lastName);
 				Wait();
@@ -125,8 +125,8 @@ namespace DownloadYTS {
 					Log("start with - " + current);
 
 					for (int i = StartOnPage; i < lastPage; i++) {// 2; i++) {
-						string listName = String.Format(ListFileName, i);
-						string listUrl = String.Format(ListURL, i);
+						string listName = string.Format(ListFileName, i);
+						string listUrl = string.Format(ListURL, i);
 						Log("list file - " + listName);
 						web.DownloadFile(listUrl, listName);
 						Wait();
@@ -147,7 +147,7 @@ namespace DownloadYTS {
 								string year = listMatches[j].Groups[3].Value;
 								string title = name + " (" + year + ")";
 
-								string pageName = String.Format(PageFileName, current, title);
+								string pageName = string.Format(PageFileName, current, title);
 								Log("page name - " + pageName);
 								try {
 									web.DownloadFile(pageUrl, pageName);
@@ -167,7 +167,13 @@ namespace DownloadYTS {
 										Error("No page matches - " + pageName + " - " + pageUrl);
 									} else {
 										string torrentUrl = pageMatches[0].Groups[pageMatches[0].Groups.Count - 2].Value;
-										string torrentName = String.Format(TorrentFileName, i, current, title);
+										//string x1080 = null;
+										//string x720 = null;
+										//for (int i = 0; i < pageMatches[0].Groups[2].Captures.Count) {
+										//	if ()
+										//}
+										//string torrentUrl = pageMatches[0].Groups[2].Captures.
+										string torrentName = string.Format(TorrentFileName, i, current, title);
 
 										Log("torrent file - " + torrentName + " - " + torrentUrl);
 
@@ -179,7 +185,7 @@ namespace DownloadYTS {
 
 										try {
 											string hash = FileToMD5(torrentName);
-											string otherName = String.Format(TorrentFileNameSecond, title, hash);
+											string otherName = string.Format(TorrentFileNameSecond, title, hash);
 
 											File.Move(torrentName, otherName);
 										} catch (Exception ex) {
