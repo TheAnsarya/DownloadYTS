@@ -4,19 +4,17 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Oliver.API {
-	class Response<T> {
+	public class Response<T> where T : class {
 		[JsonPropertyName("status")]
-		string Status { get; set; }
+		public string? Status { get; set; }
 
 		[JsonPropertyName("status_message")]
-		string StatusMessage { get; set; }
+		public string? StatusMessage { get; set; }
 
 		[JsonPropertyName("data")]
-		T Data { get; set; }
+		public T? Data { get; set; }
 
 		[JsonPropertyName("@meta")]
-		ResponseMeta Meta { get; set; }
-		
-	}
+		public ResponseMeta? Meta { get; set; }
 	}
 }

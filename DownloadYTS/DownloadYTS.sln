@@ -7,7 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadYTS", "DownloadYTS\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManageYTS", "ManageYTS\ManageYTS.csproj", "{0C6E422D-9689-45D7-B7BD-8D26E0FDA74C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oliver", "Oliver\Oliver.csproj", "{5FEE4F7E-559C-4157-BCC6-F65BF3BE61D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oliver", "Oliver\Oliver.csproj", "{5FEE4F7E-559C-4157-BCC6-F65BF3BE61D1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7C22C76C-2CD2-441C-A037-EF9B475C295D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

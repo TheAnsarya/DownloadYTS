@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Net.Torrent;
 
 namespace Oliver {
@@ -6,7 +7,15 @@ namespace Oliver {
 
 		static string ListUrl = "https://yts.mx/api/v2/list_movies.json?limit=50&order_by=asc&page={0}";
 
-		static void Main(string[] args) {
+		static async Task Main(string[] args) {
+
+
+			var response = await API.Call.ListMovies(null);
+			var i = 0;
+
+
+
+
 			//Console.WriteLine("Hello World!");
 
 			//var ser = new TorrentSerializer();

@@ -4,18 +4,18 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Oliver.API {
-	class ResponseMeta {
+	public class ResponseMeta {
 
 		[JsonPropertyName("server_time")]
-		long ServerTime { get; set; }
+		public long ServerTime { get; set; }
 
 		[JsonPropertyName("server_timezone")]
-		string ServerTimezone { get; set; }
+		public string? ServerTimezone { get; set; }
 
 		[JsonPropertyName("api_version")]
-		int ApiVersion { get; set; }
+		public int ApiVersion { get; set; }
 
 		[JsonPropertyName("execution_time")]
-		string ExecutionTime { get; set; }
+		public string? ExecutionTime { get; set; }
 	}
 }

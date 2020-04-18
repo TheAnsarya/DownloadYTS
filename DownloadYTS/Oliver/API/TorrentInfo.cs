@@ -1,35 +1,35 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace Oliver.API {
-	class TorrentInfo {
+	public class TorrentInfo {
 		[JsonPropertyName("url")]
-		string Url { get; set; }
+		public string? Url { get; set; }
 
 		[JsonPropertyName("hash")]
-		string Hash { get; set; }
+		public string? Hash { get; set; }
 
 		[JsonPropertyName("quality")]
-		string Quality { get; set; }
+		public string? Quality { get; set; }
 
 		[JsonPropertyName("type")]
-		string Type { get; set; }
+		public string? Type { get; set; }
 
 		[JsonPropertyName("seeds")]
-		int Seeds { get; set; }
+		public int Seeds { get; set; }
 
 		[JsonPropertyName("peers")]
-		int Peers { get; set; }
+		public int Peers { get; set; }
 
 		[JsonPropertyName("size")]
-		string Size { get; set; }
+		public string? Size { get; set; }
 
 		[JsonPropertyName("size_bytes")]
-		long SizeBytes { get; set; }
+		public long SizeBytes { get; set; }
 
 		[JsonPropertyName("date_uploaded")]
-		string DateUploaded { get; set; }
+		public string? DateUploaded { get; set; }
 
 		[JsonPropertyName("date_uploaded_unix")]
-		long DateUploadedUnix { get; set; }
+		public long DateUploadedUnix { get; set; }
 	}
 }
