@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Oliver.API {
+namespace Oliver.DTO.Yts {
 	public class Response<T> where T : class {
 		// Can be "ok" or "error"
 		[JsonPropertyName("status")]

@@ -12,18 +12,10 @@ namespace Oliver {
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
 			optionsBuilder.UseSqlite(connectionString: "filename=./Oliver.db");
-		}
-
-		public DbSet<Product> Products { get; set; }
+		}   
 
 		public DbSet<Movie> Movies { get; set; }
 
 		public DbSet<TorrentInfo> TorrentInfos { get; set; }
-	}
-
-	public class Product {
-		public int Id { get; set; }
-
-		public string Name { get; set; }
 	}
 }
