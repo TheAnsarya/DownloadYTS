@@ -8,5 +8,7 @@ namespace Oliver.Data {
 		public DbSet<Movie> Movies { get; set; }
 
 		public DbSet<TorrentInfo> TorrentInfos { get; set; }
+
+		public DbSet<TorrentFile> TorrentFiles { get; set; }
 	}
 }

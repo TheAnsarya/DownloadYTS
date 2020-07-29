@@ -25,4 +25,8 @@
     <PackageReference Include="Net.Torrent" Version="1.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Oliver.DTO\Oliver.DTO.csproj" />
+  </ItemGroup>
+
 </Project>

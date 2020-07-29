@@ -10,20 +10,21 @@ using NLog.Extensions.Logging;
 
 namespace Oliver.Web {
 	public class Program {
-		public static void Main(string[] args) {
-			CreateHostBuilder(args).Build().Run();
+		public static async Task Main(string[] args) {
+			await CreateHostBuilder(args).Build().RunAsync();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
-				.ConfigureWebHostDefaults(webBuilder => {
-					webBuilder.UseStartup<Startup>();
-				})
+				.UseWindowsService()
 				.ConfigureLogging(logging => {
 					logging.ClearProviders();
 
 					logging.AddConsole();
 					logging.AddNLog();
+				})
+				.ConfigureWebHostDefaults(webBuilder => {
+					webBuilder.UseStartup<Startup>();
 				});
 	}
 }

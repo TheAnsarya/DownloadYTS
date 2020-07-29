@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Globalization;
 
-namespace Oliver.API {
+namespace Oliver.YtsService.API {
 	// TODO: A lot of this class seems templatable.
 	public class ListMoviesRequest {
 		public const int DEFAULT_LIMIT = 20;
