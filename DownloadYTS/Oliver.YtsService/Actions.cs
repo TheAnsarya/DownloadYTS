@@ -10,11 +10,14 @@ namespace Oliver.YtsService {
 	public class Actions {
 		private readonly ILogger<Actions> _logger;
 
-		public Actions(ILogger<Actions> logger) {
+		private readonly OliverContext _context;
+
+		public Actions(OliverContext context, ILogger<Actions> logger) {
 			_logger = logger;
+			_context = context;
 		}
 
-		public async Task<string> InitialGrab(OliverContext context) {
+		public async Task<string> InitialGrab() {
 			var response = await API.Call.ListMovies(null);
 
 			if (response.IsOK) {
@@ -24,9 +27,9 @@ namespace Oliver.YtsService {
 						.Select(x => new Domain.Movie(x))
 						;
 
-				await context.AddAsync(movies);
+				await _context.AddAsync(movies);
 
-				await context.SaveChangesAsync();
+				await _context.SaveChangesAsync();
 
 			} else {
 				_logger.LogError($"Response bad: {response}");

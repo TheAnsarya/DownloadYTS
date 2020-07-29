@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Oliver.Domain {
-	public class TorrentFile : StampedEntity {
+	public class TorrentFile : Entity {
 		public TorrentInfo Info { get; set; }
 
 		public string Filename { get; set; }
