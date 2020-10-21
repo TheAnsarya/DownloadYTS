@@ -7,18 +7,16 @@ using System.Threading.Tasks;
 
 namespace Oliver {
 	class YTSUpdateService {
-		private OliverContext Context { get; set; }
 
-		public YTSUpdateService(OliverContext context) {
-			Context = context;
-		}
+		//public void UpdateMovie(Movie movie) {
+		//	var current = Context.Find<Movie>(movie.Id);
 
-		public async Task<bool> RefreshAllAsync() {
-			//Context.
-			var response = await API.Call.ListMovies(null);
+		//	if (current == null) {
+		//		current = Context.Add(movie).Entity;
+		//	} else {
+		//		if (current.
+		//	}
 
-			if (response.IsOK) {
-				//response.Data.Movies
 
 
 

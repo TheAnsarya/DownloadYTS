@@ -29,4 +29,8 @@
     <ProjectReference Include="..\Oliver.Data\Oliver.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Oliver.DTO\Oliver.DTO.csproj" />
+  </ItemGroup>
+
 </Project>

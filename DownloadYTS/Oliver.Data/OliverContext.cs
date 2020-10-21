@@ -10,5 +10,7 @@ namespace Oliver.Data {
 		public DbSet<TorrentInfo> TorrentInfos { get; set; }
 
 		public DbSet<GenreString> GenreStrings { get; set; }
+
+		public DbSet<TorrentFile> TorrentFiles { get; set; }
 	}
 }
