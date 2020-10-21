@@ -13,8 +13,6 @@ namespace Oliver {
 			var response = await API.Call.ListMovies(null);
 			var i = 0;
 
-			OliverContext
-			response.Data.Movies.
 
 
 			//Console.WriteLine("Hello World!");

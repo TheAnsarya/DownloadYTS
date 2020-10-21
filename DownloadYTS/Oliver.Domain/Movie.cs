@@ -73,7 +73,6 @@ namespace Oliver.Domain {
 			Rating = dto.Rating;
 			Runtime = dto.Runtime;
 
-			//public List<string>? Genres { get; set; }
 			Genres =
 				dto.Genres
 					.Select(x => new GenreString(x, this))

@@ -1,4 +1,5 @@
 ﻿using Oliver.API;
+using Oliver.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,7 +34,6 @@ namespace Oliver {
 			if (current == null) {
 				current = Context.Add(movie).Entity;
 			} else {
-				if (current.
 			}
 
 
