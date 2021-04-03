@@ -29,7 +29,7 @@ namespace DownloadYTS {
 		static int PerPage = 20;
 		static int StartOnPage = 1;
 
-		static Regex listRegex = new Regex(@"<a href=""(.+)"" class=""browse-movie-title"">(?:<span style=""color: #ACD7DE; font-size: 75%;"">\[[A-Z][A-Z]\]</span>)?(?: )?(.+)</a>\s+<div class=""browse-movie-year"">(.+)</div>");
+		static Regex listRegex = new Regex(@"<a href=""(.+)"" class=""browse-movie-title"">(?:<span style=""color: #ACD7DE; font-size: 75%;"">\[[A-Za-z]{1,3}\]</span>)?(?: )?(.+)</a>\s+<div class=""browse-movie-year"">(.+)</div>");
 		static Regex lastRegex = new Regex(@"<a href=""/browse-movies\?page=(\d+)"">Last &raquo;</a>");
 
 		// <em class="pull-left">Available in: &nbsp;<\/em>\s+(?:<a href="(.+)" rel="nofollow" title=".+">(.+)<\/a>\s*)+
